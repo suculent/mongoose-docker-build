@@ -1,6 +1,6 @@
 # MongooseOS Docker Build
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/suculent/mongooseos-docker-build.svg)](https://hub.docker.com/r/suculent/mongooseos-docker-build/) [![Docker Stars](https://img.shields.io/docker/stars/suculent/mongooseos-docker-build.svg)](https://hub.docker.com/r/suculent/mongooseos-docker-build/) [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/suculent/mongooseos-docker-build/blob/master/LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/suculent/mongoose-docker-build.svg)](https://hub.docker.com/r/suculent/mongoose-docker-build/) [![Docker Stars](https://img.shields.io/docker/stars/suculent/mongoose-docker-build.svg)](https://hub.docker.com/r/suculent/mongoose-docker-build/) [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/suculent/mongoose-docker-build/blob/master/LICENSE)
 
 Run the [MongooseOS](https://mongoose-os.com) command-line builder in a docker container. This image will take it from there and turn your MongooseOS project into a binary which you then can [flash to the ESP8266](http://nodemcu.readthedocs.org/en/dev/en/flash/).
 
@@ -60,7 +60,7 @@ There are several [tools to flash the firmware](http://nodemcu.readthedocs.org/e
 ## Support
 Don't leave comments on Docker Hub that are intended to be support requests. First, Docker Hub doesn't notify me when you write them, second I can't properly reply and third even if I could often it doesn't make much sense to keep them around forever and a day. Instead ask a question on [StackOverflow](http://stackoverflow.com/) and assign the `mongooseos` and `docker` tags.
 
-For bugs and improvement suggestions create an issue at [https://github.com/suculent/mongooseos-docker-build/issues](https://github.com/suculent/platformio-docker-build/issues).
+For bugs and improvement suggestions create an issue at [https://github.com/suculent/mongoose-docker-build/issues](https://github.com/suculent/platformio-docker-build/issues).
 
 ## Credits
 Thanks to [Marcel Stoer](http://pfalcon-oe.blogspot.com/) who inspired me with his NodeMCU firmware builder on [http://frightanic.com](http://frightanic.com)
