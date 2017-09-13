@@ -15,7 +15,7 @@ Run the [MongooseOS](https://mongoose-os.com) command-line builder in a docker c
 
   They don't need full control over the complete tool chain and don't want to setup a Linux VM with the build environment.
 
-**This image has been created for purposes of the THiNX IoT management platform.**
+**This image has been created for purposes of the [THiNX OpenSource IoT management platform](https://thinx.cloud).**
 
 
 ## Usage
@@ -66,4 +66,4 @@ For bugs and improvement suggestions create an issue at [https://github.com/sucu
 Thanks to [Marcel Stoer](http://pfalcon-oe.blogspot.com/) who inspired me with his NodeMCU firmware builder on [http://frightanic.com](http://frightanic.com)
 
 ## Author
-[Matěj Sychra @ THiNX](http://thinx.cloud)
+[Matěj Sychra @ THiNX](https://thinx.cloud)
