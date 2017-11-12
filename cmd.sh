@@ -16,3 +16,10 @@ fi
 
 echo "Building in clouds..."
 /root/.mos/bin/mos build --arch=${ARCH}
+
+# Report build status using logfile
+if [[ $? == 0 ]]; then
+  echo "THiNX BUILD SUCCESSFUL."
+else
+  echo "THiNX BUILD FAILED: $?"
+fi
