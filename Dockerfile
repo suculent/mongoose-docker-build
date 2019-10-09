@@ -1,10 +1,13 @@
 FROM ubuntu
-MAINTAINER suculent
 
-RUN apt-get update -qq && apt-get install -qq -y wget unzip git make python-serial srecord bc xz-utils gcc curl \
- && curl -fsSL https://mongoose-os.com/downloads/mos/install.sh | /bin/bash
+RUN apt-get update && apt-get install -y wget unzip git make python-serial srecord bc xz-utils gcc curl
 
-RUN /root/.mos/bin/mos update
+WORKDIR /root/
+
+COPY install.sh /root/install.sh
+RUN bash /root/install.sh
+
+RUN mos version
 RUN mkdir /opt/mongoose-builder
 WORKDIR /opt/mongoose-builder
 COPY cmd.sh /opt/
