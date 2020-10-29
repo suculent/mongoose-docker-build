@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apt-get update -qq && apt-get install -y -qq \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get update -qq && apt-get install -y -qq \
 bc \
 curl \
 gcc \
