@@ -1,6 +1,15 @@
-FROM ubuntu
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y wget unzip git make python-serial srecord bc xz-utils gcc curl
+RUN apt-get update -qq && apt-get install -y -qq \
+bc \
+curl \
+gcc \
+git \
+make \
+srecord \
+unzip \
+wget \
+xz-utils
 
 WORKDIR /root/
 
