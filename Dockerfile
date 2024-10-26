@@ -9,14 +9,16 @@ gcc \
 git \
 make \
 srecord \
+software-properties-common \
 unzip \
 wget \
 xz-utils
 
 WORKDIR /root/
 
-COPY install.sh /root/install.sh
-RUN bash /root/install.sh
+RUN add-apt-repository ppa:mongoose-os/mos \
+    && apt-get update \
+    && apt-get install -y mos-latest
 
 RUN mos version
 RUN mkdir /opt/mongoose-builder
