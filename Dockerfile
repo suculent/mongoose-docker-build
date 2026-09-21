@@ -22,7 +22,10 @@ WORKDIR /root/
 # instead of `add-apt-repository`, whose hkp keyserver lookup intermittently
 # times out in CI ("Error: retrieving gpg key timed out").
 RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x914DB695828DCC38891C7AA1FD31EFE61A213823" \
-      | gpg --dearmor -o /usr/share/keyrings/mongoose-os-archive-keyring.gpg \
+      -o /tmp/mongoose-os-key.gpg \
+    && echo "7e1884b1295dbee4970955361e96d5acc18d1016805ba38cb7e1a0a674572415  /tmp/mongoose-os-key.gpg" | sha256sum -c - \
+    && cat /tmp/mongoose-os-key.gpg | gpg --dearmor -o /usr/share/keyrings/mongoose-os-archive-keyring.gpg \
+    && rm /tmp/mongoose-os-key.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/mongoose-os-archive-keyring.gpg] https://ppa.launchpadcontent.net/mongoose-os/mos/ubuntu focal main" \
       > /etc/apt/sources.list.d/mongoose-os.list \
     && apt-get update \
