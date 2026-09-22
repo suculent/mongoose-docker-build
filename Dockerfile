@@ -9,7 +9,7 @@
 #
 # MOS_REF is master@2023-03-13, the commit the PPA binary was cut from
 # (mos reports build version 202303131403 vs the .deb's 202303141315).
-FROM golang:1.25.13 AS mosbuild
+FROM golang:1.27.1 AS mosbuild
 
 ARG MOS_REF=b44964e63a926c1ac2af7496c8749555d6c3e166
 
