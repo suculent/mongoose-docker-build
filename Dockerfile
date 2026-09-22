@@ -1,8 +1,44 @@
-FROM ubuntu:20.04
+# Stage 1: build the mos CLI from source.
+#
+# The `mos-latest` .deb from the mongoose-os PPA is a **go1.13.8** binary,
+# frozen since 2023-03-14, so every Go stdlib CVE fixed since then is reported
+# against this image and no apt upgrade can move it -- the stdlib is linked
+# into that prebuilt binary, not provided by the distro. Upstream publishes no
+# newer build (mos master is unchanged since 2023-03-13), so compiling the same
+# tree with a current toolchain is the only way to re-link the stdlib.
+#
+# MOS_REF is master@2023-03-13, the commit the PPA binary was cut from
+# (mos reports build version 202303131403 vs the .deb's 202303141315).
+FROM golang:1.25.13 AS mosbuild
+
+ARG MOS_REF=b44964e63a926c1ac2af7496c8749555d6c3e166
+
+# mos links libusb/libftdi/libudev through cgo (gousb, cesanta/hid,
+# cesanta/go-serial), and its Makefile generates version/version.go with
+# tools/fw_meta.py, hence python3.
+RUN apt-get update -qq \
+ && apt-get install -y -qq --no-install-recommends \
+      python3 pkg-config libusb-1.0-0-dev libftdi1-dev libudev-dev git \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN git clone -q https://github.com/mongoose-os/mos /src \
+ && cd /src \
+ && git checkout -q ${MOS_REF} \
+ && make mos \
+ && ./mos version \
+ && cp ./mos /usr/local/bin/mos
+
+# Docker Hardened Image base (CIS-compliant, DHI-maintained Debian 13 "trixie").
+# The `-dev` variant is required: cmd.sh shells out to the toolchain at run
+# time, and the runtime variant ships no package manager and no compiler.
+FROM dhi.io/debian-base:trixie-dev
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -qq && apt-get install -y -qq \
+# libusb-1.0-0 + libftdi1-2 are what the PPA package used to pull in as its
+# Depends; the cgo-linked mos binary needs them at run time (libudev1 arrives
+# with libusb).
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
 bc \
 ca-certificates \
 curl \
@@ -11,25 +47,16 @@ git \
 gnupg \
 make \
 srecord \
-software-properties-common \
 unzip \
 wget \
-xz-utils
+xz-utils \
+libusb-1.0-0 \
+libftdi1-2 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /root/
 
-# Add the mongoose-os/mos PPA manually. We fetch the signing key over HTTPS
-# instead of `add-apt-repository`, whose hkp keyserver lookup intermittently
-# times out in CI ("Error: retrieving gpg key timed out").
-RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x914DB695828DCC38891C7AA1FD31EFE61A213823" \
-      -o /tmp/mongoose-os-key.gpg \
-    && echo "7e1884b1295dbee4970955361e96d5acc18d1016805ba38cb7e1a0a674572415  /tmp/mongoose-os-key.gpg" | sha256sum -c - \
-    && cat /tmp/mongoose-os-key.gpg | gpg --dearmor -o /usr/share/keyrings/mongoose-os-archive-keyring.gpg \
-    && rm /tmp/mongoose-os-key.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/mongoose-os-archive-keyring.gpg] https://ppa.launchpadcontent.net/mongoose-os/mos/ubuntu focal main" \
-      > /etc/apt/sources.list.d/mongoose-os.list \
-    && apt-get update \
-    && apt-get install -y mos-latest
+COPY --from=mosbuild /usr/local/bin/mos /usr/bin/mos
 
 RUN mos version
 RUN mkdir /opt/mongoose-builder
