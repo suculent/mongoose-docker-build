@@ -7,11 +7,20 @@
 # newer build (mos master is unchanged since 2023-03-13), so compiling the same
 # tree with a current toolchain is the only way to re-link the stdlib.
 #
-# MOS_REF is master@2023-03-13, the commit the PPA binary was cut from
-# (mos reports build version 202303131403 vs the .deb's 202303141315).
+# The source is our fork, not upstream. Upstream's tree still carries its
+# 2021 dependency set -- x/crypto, go-git v5.4.2, grpc v1.40, x/net -- which
+# grype scores at 77 findings, 11 of them critical, and upstream has published
+# nothing since 2023-03-13 to fix it. suculent/mos @ thinx/deps-2026-09 is
+# master with those nine modules bumped to current and three latent
+# format-string bugs fixed; it builds firmware identically. See that commit
+# for the full rationale and the go-git regression test it adds.
+#
+# Repin by SHA after any fork change -- never track the branch name, or the
+# image stops being reproducible.
 FROM golang:1.27.1 AS mosbuild
 
-ARG MOS_REF=b44964e63a926c1ac2af7496c8749555d6c3e166
+ARG MOS_REPO=https://github.com/suculent/mos
+ARG MOS_REF=f612a4c098ad669ae76fb5e767ae18141ea36a50
 
 # mos links libusb/libftdi/libudev through cgo (gousb, cesanta/hid,
 # cesanta/go-serial), and its Makefile generates version/version.go with
@@ -21,7 +30,7 @@ RUN apt-get update -qq \
       python3 pkg-config libusb-1.0-0-dev libftdi1-dev libudev-dev git \
  && rm -rf /var/lib/apt/lists/*
 
-RUN git clone -q https://github.com/mongoose-os/mos /src \
+RUN git clone -q ${MOS_REPO} /src \
  && cd /src \
  && git checkout -q ${MOS_REF} \
  && make mos \
